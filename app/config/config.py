@@ -75,7 +75,7 @@ def shutdown_sequence(client):
         retain=True
     )
 
-     subprocess.run(["shutdown", "-h", "now"])
+    subprocess.run(["shutdown", "-h", "now"])
     # Normaly, TOPIC_ONLINE message will be send by broker when shutting down will produce connexion lost (Last Will Testtament).
  
 
