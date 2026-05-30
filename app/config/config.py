@@ -15,7 +15,7 @@ DEVICE_MODEL = os.getenv("DEVICE_MODEL")
 
 TOPIC_CMD_SHUTDOWN = f"{DEVICE_ID}/cmd/shutdown"
 
-TOPIC_ONLINE = f"{DEVICE_ID}/status/availability_topic"
+TOPIC_ONLINE = f"{DEVICE_ID}/status/availability"
 TOPIC_STATE = f"{DEVICE_ID}/status/state"
 
 DISCOVERY_TOPIC = f"homeassistant/device/{DEVICE_ID}/config"
@@ -77,7 +77,7 @@ def shutdown_sequence(client):
 def publish_state(client):
         client.publish(
             TOPIC_ONLINE,
-            "online",
+            "ON",
             retain=True
         )
 
