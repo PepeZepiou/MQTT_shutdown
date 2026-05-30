@@ -70,30 +70,3 @@ client.subscribe(
 )
 
 client.loop_start()
-
-
-publish_discovery(client)
-
-client.publish(
-    TOPIC_ONLINE,
-    "true",
-    retain=True
-)
-
-client.publish(
-    TOPIC_FTP_ACTIVE,
-    "true",
-    retain=True
-)
-
-client.publish(
-    TOPIC_STATE,
-    "running",
-    retain=True
-)
-
-client.subscribe(
-    TOPIC_CMD_SHUTDOWN
-)
-
-client.loop_start()
