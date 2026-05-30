@@ -16,8 +16,6 @@ DEVICE_MODEL = os.getenv("DEVICE_MODEL")
 TOPIC_CMD_SHUTDOWN = f"{DEVICE_ID}/cmd/shutdown"
 
 TOPIC_ONLINE = f"{DEVICE_ID}/status/availability_topic"
-TOPIC_FTP_ACTIVE = f"{DEVICE_ID}/status/ftp_active"
-TOPIC_SYNCING = f"{DEVICE_ID}/status/syncing"
 TOPIC_STATE = f"{DEVICE_ID}/status/state"
 
 DISCOVERY_TOPIC = f"homeassistant/device/{DEVICE_ID}/config"
