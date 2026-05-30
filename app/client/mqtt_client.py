@@ -1,24 +1,203 @@
+import json
+#import subprocess
+
 import paho.mqtt.client as mqtt
 
-# The callback for when the client receives a CONNACK response from the server.
-def on_connect(client, userdata, flags, reason_code, properties):
-    print(f"Connected with result code {reason_code}")
-    # Subscribing in on_connect() means that if we lose the connection and
-    # reconnect then subscriptions will be renewed.
-    client.subscribe("$SYS/#")
 
-# The callback for when a PUBLISH message is received from the server.
+BROKER = "192.168.10.11"
+PORT = 1883
+
+USERNAME = "mqtt_user"
+PASSWORD = "********"
+
+DEVICE_ID = "ftp_server"
+
+TOPIC_CMD_SHUTDOWN = "ftp_server/cmd/shutdown"
+
+TOPIC_ONLINE = "ftp_server/status/online"
+TOPIC_FTP_ACTIVE = "ftp_server/status/ftp_active"
+TOPIC_SYNCING = "ftp_server/status/syncing"
+TOPIC_STATE = "ftp_server/status/state"
+
+DISCOVERY_TOPIC = f"homeassistant/device/{DEVICE_ID}/config"
+
+# Device Discovery Message
+def publish_discovery(client):
+
+    payload = {
+        "dev": {
+            "ids": DEVICE_ID,
+            "name": "FTP Server",
+            "mf": "Homelab",
+            "mdl": "Arch Linux FTP"
+        },
+
+        "o": {
+            "name": "mqtt-ftp-client"
+        },
+
+        "cmps": {
+
+            "online": {
+                "p": "binary_sensor",
+                "device_class": "connectivity",
+                "value_template": "{{ value }}",
+                "state_topic": TOPIC_ONLINE
+            },
+
+            "ftp_active": {
+                "p": "binary_sensor",
+                "value_template": "{{ value }}",
+                "state_topic": TOPIC_FTP_ACTIVE
+            },
+
+            "syncing": {
+                "p": "binary_sensor",
+                "value_template": "{{ value }}",
+                "state_topic": TOPIC_SYNCING
+            },
+
+            "state": {
+                "p": "sensor",
+                "state_topic": TOPIC_STATE
+            }
+        }
+    }
+
+    client.publish(
+        DISCOVERY_TOPIC,
+        json.dumps(payload),
+        retain=True
+    )
+
+# Only one message is expected. Maybe this function has to be modified in case of bad message (bug).
 def on_message(client, userdata, msg):
-    print(msg.topic+" "+str(msg.payload))
 
-mqttc = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
-mqttc.on_connect = on_connect
-mqttc.on_message = on_message
+    topic = msg.topic
+    payload = msg.payload.decode()
 
-mqttc.connect("mqtt.eclipseprojects.io", 1883, 60)
+    print(f"Commande reçue : {topic} -> {payload}")
 
-# Blocking call that processes network traffic, dispatches callbacks and
-# handles reconnecting.
-# Other loop*() functions are available that give a threaded interface and a
-# manual interface.
-mqttc.loop_forever()
+    if topic == TOPIC_CMD_SHUTDOWN:
+
+        client.publish(
+            TOPIC_STATE,
+            "shutdown_requested",
+            retain=True
+        )
+
+        shutdown_sequence(client)
+
+
+def shutdown_sequence(client):
+
+    client.publish(
+        TOPIC_SYNCING,
+        "true",
+        retain=True
+    )
+
+    client.publish(
+        TOPIC_STATE,
+        "syncing",
+        retain=True
+    )
+
+    # Exemple :
+    # subprocess.run(["rsync", ...])
+
+    time.sleep(5)
+
+    client.publish(
+        TOPIC_SYNCING,
+        "false",
+        retain=True
+    )
+
+    client.publish(
+        TOPIC_STATE,
+        "shut_down",
+        retain=True
+    )
+
+    # subprocess.run(["shutdown", "-h", "now"])
+
+
+# MQTT Initialization
+client = mqtt.Client(
+    mqtt.CallbackAPIVersion.VERSION2
+)
+
+client.username_pw_set(
+    USERNAME,
+    PASSWORD
+)
+
+client.will_set(
+    TOPIC_ONLINE,
+    payload="false",
+    qos=1,
+    retain=True
+)
+
+client.on_message = on_message
+
+client.connect(
+    BROKER,
+    PORT,
+    60
+)
+
+
+publish_discovery(client)
+
+client.publish(
+    TOPIC_ONLINE,
+    "true",
+    retain=True
+)
+
+client.publish(
+    TOPIC_FTP_ACTIVE,
+    "true",
+    retain=True
+)
+
+client.publish(
+    TOPIC_STATE,
+    "running",
+    retain=True
+)
+
+client.subscribe(
+    TOPIC_CMD_SHUTDOWN
+)
+
+client.loop_start()
+
+
+publish_discovery(client)
+
+client.publish(
+    TOPIC_ONLINE,
+    "true",
+    retain=True
+)
+
+client.publish(
+    TOPIC_FTP_ACTIVE,
+    "true",
+    retain=True
+)
+
+client.publish(
+    TOPIC_STATE,
+    "running",
+    retain=True
+)
+
+client.subscribe(
+    TOPIC_CMD_SHUTDOWN
+)
+
+client.loop_start()
