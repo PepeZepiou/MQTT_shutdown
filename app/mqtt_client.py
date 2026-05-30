@@ -69,4 +69,4 @@ client.subscribe(
     TOPIC_CMD_SHUTDOWN
 )
 
-client.loop_start()
+client.loop_forever()
