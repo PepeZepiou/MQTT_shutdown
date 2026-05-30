@@ -1,2 +1,15 @@
 # MQTT_shutdown
 Trying to create a docker which will connect to Home Assistant broker, publish online status and subscribe to receive remote shutdown signal.
+
+I would like to create a generic image, so conf will be generate at launch. So command will be something like :
+
+docker run \
+-e MQTT_ADDRESS=192.168.11.11 \
+-e MQTT_PORT=1883
+-e MQTT_USER=mqtt_user \
+-e MQTT_PASSWORD=xxxxx \
+-e DEVICE_ID=FTP_SERVER \
+-e DEVICE_NAME='FTP Server' \
+-e DEVICE_MANUFACTURER=Homelab \
+-e DEVICE_MODEL='Arch Linux vstpd' \
+mqtt_client
