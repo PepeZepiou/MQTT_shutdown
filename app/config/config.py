@@ -38,12 +38,14 @@ DEVICE_DISCOVERY_PAYLOAD = {
                 "p": "binary_sensor",
                 "device_class": "connectivity",
                 "value_template": "{{ value }}",
-                "state_topic": TOPIC_ONLINE
+                "state_topic": TOPIC_ONLINE,
+                "unique_id": f"{DEVICE_ID}_connectivity_sensor"
             },
 
             "state": {
                 "p": "sensor",
-                "state_topic": TOPIC_STATE
+                "state_topic": TOPIC_STATE,
+                "unique_id": f"{DEVICE_ID}_state_sensor"
             }
         }
     }
