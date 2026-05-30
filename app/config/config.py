@@ -46,6 +46,12 @@ DEVICE_DISCOVERY_PAYLOAD = {
                 "p": "sensor",
                 "state_topic": TOPIC_STATE,
                 "unique_id": f"{DEVICE_ID}_state_sensor"
+            },
+
+            "shutdown": {
+                "p": "button",
+                "command_topic": TOPIC_CMD_SHUTDOWN,
+                "unique_id": f"{DEVICE_ID}_cmd_button"
             }
         }
     }
