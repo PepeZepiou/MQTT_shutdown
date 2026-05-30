@@ -47,7 +47,7 @@ client.username_pw_set(
 
 client.will_set(
     TOPIC_ONLINE,
-    payload="false",
+    payload="offline",
     qos=1,
     retain=True
 )
