@@ -87,3 +87,23 @@ def shutdown_sequence(client):
     )
 
     # subprocess.run(["shutdown", "-h", "now"])
+
+
+def publish_state(client):
+        client.publish(
+            TOPIC_ONLINE,
+            "true",
+            retain=True
+        )
+
+        client.publish(
+            TOPIC_FTP_ACTIVE,
+            "true",
+            retain=True
+        )
+
+        client.publish(
+            TOPIC_STATE,
+            "running",
+            retain=True
+        )
