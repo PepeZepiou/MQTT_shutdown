@@ -1,12 +1,13 @@
 import config
 import subprocess
 import json
+import time
 
 
 
 def shutdown_sequence(client):
     client.publish(config.TOPIC_STATE, "shutting_down", retain=True)
-    client.publish(config.TOPIC_EVENT, "shutting_down_requested", retain=True)
+    client.publish(config.TOPIC_EVENT, "shutting_down_requested", retain=False)
     # Command used in container
     #with open("/shutdown/request", "w") as f:
     #    f.write("shutdown")
@@ -17,7 +18,7 @@ def shutdown_sequence(client):
 
 def heartbeat_loop(client):
     while True:
-        client.publish(config.TOPIC_HEARTBEAT, str(int(time.time())), retain=False)
+        client.publish(config.TOPIC_HEARTBEAT, datetime.now(timezone.utc).isoformat(), retain=False)
         time.sleep(10)
 
 
@@ -25,14 +26,14 @@ def heartbeat_loop(client):
 def publish_state(client):
     client.publish(config.TOPIC_ONLINE, "ON", retain=True)
     client.publish(config.TOPIC_STATE, "running", retain=True)
-    client.publish(config.TOPIC_EVENT, "state published", retain=True)
+    client.publish(config.TOPIC_EVENT, "state published", retain=False)
 
 
 
 def publish_discovery(client):
     payload = config.DEVICE_DISCOVERY_PAYLOAD
     client.publish(config.DISCOVERY_TOPIC, json.dumps(payload), retain=True)
-    client.publish(config.TOPIC_EVENT, "discovery published", retain=True)
+    client.publish(config.TOPIC_EVENT, "discovery published", retain=False)
 
 
 
