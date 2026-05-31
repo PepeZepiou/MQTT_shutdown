@@ -13,3 +13,7 @@ docker run \
 -e DEVICE_MANUFACTURER=Homelab \
 -e DEVICE_MODEL='Arch Linux vstpd' \
 mqtt_client
+
+For the momemt, docker could not work. I will have to implement communication between host and container to shutdown.
+
+I'm trying to improve model to be more OT like (security, error proof, aknowledgement ...). It's usefull, but interesting.
