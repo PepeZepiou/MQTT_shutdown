@@ -1,72 +1,30 @@
-import json
-#import subprocess
-
 import paho.mqtt.client as mqtt
-from config.config import *
-
-
-# Device Discovery Message
-def publish_discovery(client):
-
-    payload = DEVICE_DISCOVERY_PAYLOAD
-
-    client.publish(
-        DISCOVERY_TOPIC,
-        json.dumps(payload),
-        retain=True
-    )
-
-# Only one message is expected. Maybe this function has to be modified in case of bad message (bug).
-def on_message(client, userdata, msg):
-
-    topic = msg.topic
-    payload = msg.payload.decode()
-
-    print(f"Commande reçue : {topic} -> {payload}")
-
-    if topic == TOPIC_CMD_SHUTDOWN:
-
-        client.publish(
-            TOPIC_STATE,
-            "shutdown_requested",
-            retain=True
-        )
-
-        shutdown_sequence(client)
+import config.config as config
+import config.modules as modules
         
 
 # MQTT Initialization
 client = mqtt.Client(
     mqtt.CallbackAPIVersion.VERSION2
 )
-
 client.username_pw_set(
-    USERNAME,
-    PASSWORD
+    config.USERNAME,
+    config.PASSWORD
 )
-
 client.will_set(
-    TOPIC_ONLINE,
+    config.TOPIC_ONLINE,
     payload="OFF",
     qos=1,
     retain=True
 )
-
-client.on_message = on_message
+client.reconnect_delay_set(min_delay=5, max_delay=60)
+client.on_message = modules.on_message
+client.on_connect = modules.on_connect
 
 client.connect(
-    BROKER,
-    PORT,
+    config.BROKER,
+    config.PORT,
     60
-)
-
-
-publish_discovery(client)
-
-publish_state(client)
-
-client.subscribe(
-    TOPIC_CMD_SHUTDOWN
 )
 
 client.loop_forever()
