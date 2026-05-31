@@ -30,7 +30,5 @@ client.connect(
 
 client.loop_start()
 
-threading.Thread(target=modules.heartbeat_loop, args=(client,), daemon=True).start()
-
 modules.main(client)
 
