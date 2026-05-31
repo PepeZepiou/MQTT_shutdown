@@ -32,6 +32,5 @@ client.loop_start()
 
 threading.Thread(target=modules.heartbeat_loop, args=(client,), daemon=True).start()
 
-while True:
-    time.sleep(60)
+modules.main(client)
 
