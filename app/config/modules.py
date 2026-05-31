@@ -38,7 +38,7 @@ def publish_state(client):
 
 
 def publish_discovery(client):
-    payload = DEVICE_DISCOVERY_PAYLOAD
+    payload = config.DEVICE_DISCOVERY_PAYLOAD
     client.publish(
         config.DISCOVERY_TOPIC,
         json.dumps(payload),
