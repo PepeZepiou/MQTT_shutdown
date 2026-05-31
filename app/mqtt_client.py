@@ -1,6 +1,7 @@
 import paho.mqtt.client as mqtt
 import config.config as config
 import config.modules as modules
+import time
         
 
 # MQTT Initialization
@@ -27,4 +28,10 @@ client.connect(
     60
 )
 
-client.loop_forever()
+client.loop_start()
+
+threading.Thread(target=modules.heartbeat_loop, args=(client,), daemon=True).start()
+
+while True:
+    time.sleep(60)
+
