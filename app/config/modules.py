@@ -1,5 +1,5 @@
 import config
-import import subprocess
+import subprocess
 import json
 
 def shutdown_sequence(client):
