@@ -33,6 +33,16 @@ def publish_discovery(client):
     payload = config.DEVICE_DISCOVERY_PAYLOAD
     client.publish(config.DISCOVERY_TOPIC, json.dumps(payload), retain=True)
     client.publish(config.TOPIC_EVENT, "discovery published", retain=True)
+
+
+
+def publish_heartbeat(client):
+    client.publish(config.TOPIC_HEARTBEAT, str(int(time.time())), retain=False)
+
+
+
+def publish_error(client, msg):
+    client.publish(config.TOPIC_ERROR, msg, retain=False)
     
 
 
@@ -48,3 +58,19 @@ def on_message(client, userdata, msg):
     payload = msg.payload.decode()
     if topic == config.TOPIC_CMD_SHUTDOWN:
         shutdown_sequence(client)
+
+
+
+def main(client):
+    last_heartbeat = 0
+    while True:
+        try:
+            now = time.time()
+            if now - last_heartbeat > 10:
+                publish_heartbeat(client)
+                last_heartbeat = now
+        except Exception as e:
+            publish_error(client, f"Error in main loop: {e}")
+
+        time.sleep(1)
+
