@@ -1,4 +1,4 @@
-import config
+import config.config as config
 import subprocess
 import json
 import time
