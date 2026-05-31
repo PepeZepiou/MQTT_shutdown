@@ -23,7 +23,7 @@ TOPIC_HEARTBEAT = f"MQTT_Shutdown/{DEVICE_ID}/telemetry/heartbeat"
 TOPIC_UPTIME = f"MQTT_Shutdown/{DEVICE_ID}/telemetry/uptime"
 # EVENTS TOPICS
 TOPIC_STATE = f"MQTT_Shutdown/{DEVICE_ID}/event/state"
-TOPIC_ERROR = f"MQTT_Shutdown/{DEVICE_ID}/event/error"
+TOPIC_ERROR = f"MQTT_Shutdown/{DEVICE_ID}/event/error"        # THIS SHOULD BE USED LATER IN OT LIKE DIY SENSORS
 # HOME ASSISTANT AUTO-DISCOVERY TOPIC
 DISCOVERY_TOPIC = f"homeassistant/device/{DEVICE_ID}/config"
 
