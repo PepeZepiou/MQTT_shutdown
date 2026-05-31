@@ -20,7 +20,7 @@ TOPIC_CMD_SHUTDOWN = f"MQTT_Shutdown/{DEVICE_ID}/cmd/shutdown"
 # TELEMETRY TOPICS
 TOPIC_ONLINE = f"MQTT_Shutdown/{DEVICE_ID}/telemetry/availability"
 TOPIC_HEARTBEAT = f"MQTT_Shutdown/{DEVICE_ID}/telemetry/heartbeat"
-#TOPIC_UPTIME = f"MQTT_Shutdown/{DEVICE_ID}/telemetry/uptime"
+TOPIC_UPTIME = f"MQTT_Shutdown/{DEVICE_ID}/telemetry/uptime"
 # EVENTS TOPICS
 TOPIC_STATE = f"MQTT_Shutdown/{DEVICE_ID}/event/state"
 TOPIC_ERROR = f"MQTT_Shutdown/{DEVICE_ID}/event/error"
