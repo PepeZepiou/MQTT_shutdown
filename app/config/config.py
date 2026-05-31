@@ -16,15 +16,15 @@ DEVICE_MODEL = os.getenv("DEVICE_MODEL", "Model_1")
 
 # TOPICS
 # COMMAND TOPIC
-TOPIC_CMD_SHUTDOWN = f"MQTT_Shutdown/{DEVICE_ID}/cmd/shutdown"
+TOPIC_CMD_SHUTDOWN = f"mqtt2shutdown/{DEVICE_ID}/cmd/shutdown"
 # TELEMETRY TOPICS
-TOPIC_ONLINE = f"MQTT_Shutdown/{DEVICE_ID}/telemetry/availability"
-TOPIC_HEARTBEAT = f"MQTT_Shutdown/{DEVICE_ID}/telemetry/heartbeat"
-TOPIC_UPTIME = f"MQTT_Shutdown/{DEVICE_ID}/telemetry/uptime"
-TOPIC_STATE = f"MQTT_Shutdown/{DEVICE_ID}/event/state"
+TOPIC_ONLINE = f"mqtt2shutdown/{DEVICE_ID}/telemetry/availability"
+TOPIC_HEARTBEAT = f"mqtt2shutdown/{DEVICE_ID}/telemetry/heartbeat"
+TOPIC_UPTIME = f"mqtt2shutdown/{DEVICE_ID}/telemetry/uptime"
+TOPIC_STATE = f"mqtt2shutdown/{DEVICE_ID}/event/state"
 # EVENTS TOPICS
-TOPIC_EVENT = f"MQTT_Shutdown/{DEVICE_ID}/event/event"
-TOPIC_ERROR = f"MQTT_Shutdown/{DEVICE_ID}/event/error"        # THIS SHOULD BE USED LATER IN OT LIKE DIY SENSORS
+TOPIC_EVENT = f"mqtt2shutdown/{DEVICE_ID}/event/event"
+TOPIC_ERROR = f"mqtt2shutdown/{DEVICE_ID}/event/error"        # THIS SHOULD BE USED LATER IN OT LIKE DIY SENSORS
 # HOME ASSISTANT AUTO-DISCOVERY TOPIC
 DISCOVERY_TOPIC = f"homeassistant/device/{DEVICE_ID}/config"
 
