@@ -17,3 +17,9 @@ mqtt_client
 For the momemt, docker could not work. I will have to implement communication between host and container to shutdown.
 
 I'm trying to improve model to be more OT like (security, error proof, aknowledgement ...). It's usefull, but interesting.
+
+I need to implement TLS, timestamp with control on shutdown command to avoid replay, avoid double command (if state == shutting_down; return), ...
+
+I would like to implement timestamp on event message.
+
+An error topic has been setup, but I don't know yet how to use it in this configuration. But it can be usefull in DIY sensor.
