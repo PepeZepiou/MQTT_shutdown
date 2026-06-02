@@ -1,3 +1,5 @@
+import os
+
 # BROKER INFORMATIONS
 BROKER = os.getenv("MQTT_ADDRESS", "192.168.1.11")
 PORT = int(os.getenv("MQTT_PORT", "1883"))
