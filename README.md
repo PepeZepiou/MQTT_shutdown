@@ -27,3 +27,16 @@ I need to implement TLS, timestamp with control on shutdown command to avoid rep
 I would like to implement timestamp on event message.
 
 An error topic has been setup, but I don't know yet how to use it in this configuration. But it can be usefull in DIY sensor.
+
+
+USAGE:
+
+Create shared folder:
+mkdir /opt/mqtt2shutdown/commands/
+
+Copy services:
+cp ./systemd/* /etc/systemd/system/
+chmod +x /etc/systemd/system/...
+
+Enable services:
+systemctl enable ...
