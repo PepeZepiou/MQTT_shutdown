@@ -4,8 +4,10 @@ Trying to create a docker which will connect to Home Assistant broker, publish o
 I would like to create a generic image, so conf will be generate at launch. So command will be something like :
 
 docker run \
+--name mqtt2shutdown \
+-v /opt/mqtt2shutdown/commands:/shared/commands \
 -e MQTT_ADDRESS=192.168.11.11 \
--e MQTT_PORT=1883
+-e MQTT_PORT=1883 \
 -e MQTT_USER=mqtt_user \
 -e MQTT_PASSWORD=xxxxx \
 -e DEVICE_ID=FTP_SERVER \
@@ -14,7 +16,9 @@ docker run \
 -e DEVICE_MODEL='Arch Linux vstpd' \
 mqtt_client
 
-For the momemt, docker could not work. I will have to implement communication between host and container to shutdown.
+Container will create a MQTT client, communicate with  MQTT broker, and write in file /shared/commands/shutdown.request.
+A systemd unit .service launch container at startup, a .path unit check if something exist in /shared/commands/shutdown.request, and start .service which launch /usr/local/bin/shutdown-handler.sh.
+This one will remove file in /shared/commands/, then execute shutdown sequence.
 
 I'm trying to improve model to be more OT like (security, error proof, aknowledgement ...). It's usefull, but interesting.
 
