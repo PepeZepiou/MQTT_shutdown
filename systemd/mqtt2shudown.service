@@ -1,0 +1,7 @@
+[Unit]
+Description=Execute shutdown
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/shutdown-handler.sh
+
