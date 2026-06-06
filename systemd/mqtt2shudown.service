@@ -5,3 +5,5 @@ Description=Execute shutdown
 Type=oneshot
 ExecStart=/usr/local/bin/shutdown-handler.sh
 
+[Install]
+WantedBy=multi-user.target
