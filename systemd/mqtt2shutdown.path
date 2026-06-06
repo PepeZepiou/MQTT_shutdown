@@ -2,7 +2,6 @@
 Description=Watch shutdown requests
 
 [Path]
-PathExists=/shared/shutdown.request
-
+PathExists=/opt/mqtt2shutdown/commands:/shared/commands
 [Install]
 WantedBy=multi-user.target
