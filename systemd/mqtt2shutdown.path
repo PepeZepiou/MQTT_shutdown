@@ -1,0 +1,8 @@
+[Unit]
+Description=Watch shutdown requests
+
+[Path]
+PathExists=/shared/shutdown.request
+
+[Install]
+WantedBy=multi-user.target
