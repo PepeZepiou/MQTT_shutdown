@@ -7,10 +7,10 @@ WORKDIR /app
 
 RUN useradd -m app
 
-COPY client/config/requirements.txt ./
+COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY --chown=app:app client/ ./
+COPY --chown=app:app app/ ./
 
 USER app
 
