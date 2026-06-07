@@ -26,17 +26,32 @@ I need to implement TLS, timestamp with control on shutdown command to avoid rep
 
 I would like to implement timestamp on event message.
 
-An error topic has been setup, but I don't know yet how to use it in this configuration. But it can be usefull in DIY sensor.
-
 
 USAGE:
 
+Copy files:
+git clone https://github.com/PepeZepiou/MQTT_shutdown ~/
+
+Build image:
+docker build ~/MQTT_shutdown/ -t mqtt2shutdown
+
 Create shared folder:
 mkdir /opt/mqtt2shutdown/commands/
+chown root:root /opt/mqtt2shutdown
+chmod 755 /opt/mqtt2shutdown
+chown root:root /opt/mqtt2shutdown/commands
+chmod 777 /opt/mqtt2shutdown/commands
+
+Copy handler:
+sudo cp shutdown-handler.sh /usr/local/bin/shutdown-handler.sh
+sudo chown root:root /usr/local/bin/mqtt2shutdown-handler.sh # maybe usefull due to sudo cp.
+sudo chmod 700 /usr/local/bin/mqtt2shutdown-handler.sh
 
 Copy services:
-cp ./systemd/* /etc/systemd/system/
-chmod +x /etc/systemd/system/...
+sudo cp ./systemd/* /etc/systemd/system/
+sudo chmod 644 /etc/systemd/system/...
+
+
 
 Enable services:
 systemctl enable ...
