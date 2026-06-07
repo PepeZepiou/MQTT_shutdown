@@ -112,23 +112,6 @@ Build image:
 docker build . -t mqtt2shutdown
 ```
 
-Run container:
-
-```bash
-docker run \
-  --name mqtt2shutdown \
-  -v /opt/mqtt2shutdown/commands:/shared/commands \
-  -e MQTT_ADDRESS=192.168.11.11 \
-  -e MQTT_PORT=1883 \
-  -e MQTT_USER=mqtt_user \
-  -e MQTT_PASSWORD=xxxxx \
-  -e DEVICE_ID=FTP_SERVER \
-  -e DEVICE_NAME="FTP Server" \
-  -e DEVICE_MANUFACTURER=Homelab \
-  -e DEVICE_MODEL="Arch Linux vsftpd" \
-  mqtt2shutdown
-```
-
 ---
 
 ## Host Configuration
@@ -143,6 +126,19 @@ sudo chmod 755 /opt/mqtt2shutdown
 
 sudo chown root:root /opt/mqtt2shutdown/commands
 sudo chmod 777 /opt/mqtt2shutdown/commands
+```
+
+Define env variables:
+
+```
+sudo cp mqtt2shutdown.env /etc/mqtt2shutdown.env
+chmod 600 /etc/mqtt2shutdown.env
+```
+
+This file contain specifics variables. Each user have to edit it.
+
+```
+sudo vim /etc/mqtt2shutdown.env
 ```
 
 ---
