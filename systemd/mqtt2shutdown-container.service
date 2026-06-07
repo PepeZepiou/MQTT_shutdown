@@ -3,18 +3,20 @@ Description=MQTT2Shutdown_container_startup
 After=docker.service
 Requires=docker.service
 
+
 [Service]
 Restart=always
 RestartSec=10
+EnvironmentFile=/etc/mqtt2shutdown.env
 
-ExecStart=/usr/bin/docker run\
-    --name mqtt2shutdown\
-    -v /opt/mqtt2shutdown/commands:/shared/commands
-    -e MQTT_ADDRESS=192.168.1.10\
-    ...\
-    mqtt2shutdown
+ExecStart=/usr/bin/docker run \
+  --rm \
+  --name mqtt2shutdown \
+  --env-file /etc/mqtt2shutdown.env \
+  mqtt2shutdown
 
 ExecStop=/usr/bin/docker stop mqtt2shutdown
+
 
 [Install]
 WantedBy=multi-user.target
