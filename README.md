@@ -125,7 +125,7 @@ sudo chown root:root /opt/mqtt2shutdown
 sudo chmod 755 /opt/mqtt2shutdown
 
 sudo chown root:root /opt/mqtt2shutdown/commands
-sudo chmod 777 /opt/mqtt2shutdown/commands
+sudo chmod 755 /opt/mqtt2shutdown/commands
 ```
 
 Define env variables:
