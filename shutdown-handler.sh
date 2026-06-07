@@ -2,4 +2,4 @@
 
 rm -f /opt/mqtt2shutdown/commands/shutdown.request
 
-sytemctl poweroff
+systemctl poweroff
