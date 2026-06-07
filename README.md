@@ -1,57 +1,218 @@
-# MQTT_shutdown
-Trying to create a docker which will connect to Home Assistant broker, publish online status and subscribe to receive remote shutdown signal.
+# MQTT2Shutdown
 
-I would like to create a generic image, so conf will be generate at launch. So command will be something like :
+MQTT2Shutdown is a lightweight Python application designed to expose Linux hosts to Home Assistant through MQTT Discovery.
 
-docker run \
---name mqtt2shutdown \
--v /opt/mqtt2shutdown/commands:/shared/commands \
--e MQTT_ADDRESS=192.168.11.11 \
--e MQTT_PORT=1883 \
--e MQTT_USER=mqtt_user \
--e MQTT_PASSWORD=xxxxx \
--e DEVICE_ID=FTP_SERVER \
--e DEVICE_NAME='FTP Server' \
--e DEVICE_MANUFACTURER=Homelab \
--e DEVICE_MODEL='Arch Linux vstpd' \
-mqtt_client
+The project runs inside a Docker container and allows Home Assistant to remotely shut down a Linux machine through MQTT commands.
 
-Container will create a MQTT client, communicate with  MQTT broker, and write in file /shared/commands/shutdown.request.
-A systemd unit .service launch container at startup, a .path unit check if something exist in /shared/commands/shutdown.request, and start .service which launch /usr/local/bin/shutdown-handler.sh.
-This one will remove file in /shared/commands/, then execute shutdown sequence.
+The container itself never executes privileged system commands. Instead, it communicates with the host through a shared directory monitored by systemd.
 
-I'm trying to improve model to be more OT like (security, error proof, aknowledgement ...). It's usefull, but interesting.
+This project is primarily intended for homelab environments.
 
-I need to implement TLS, timestamp with control on shutdown command to avoid replay, avoid double command (if state == shutting_down; return), ...
+---
 
-I would like to implement timestamp on event message.
+## Features
 
+* MQTT client based on Paho MQTT
+* Home Assistant MQTT Discovery support
+* Availability reporting
+* Device state reporting
+* Remote shutdown command
+* Docker deployment
+* Systemd integration
+* Shared-folder based host communication
+* Last Will and Testament (LWT)
+* Heartbeat telemetry
 
-USAGE:
+---
 
-Copy files:
-git clone https://github.com/PepeZepiou/MQTT_shutdown ~/
+## Architecture
+
+```text
+Home Assistant
+      │
+      ▼
+ MQTT Broker
+      │
+      ▼
+ MQTT2Shutdown Container
+      │
+      ▼
+ /opt/mqtt2shutdown/commands
+      │
+      ▼
+ mqtt2shutdown.path
+      │
+      ▼
+ mqtt2shutdown.service
+      │
+      ▼
+ shutdown-handler.sh
+      │
+      ▼
+ Linux shutdown
+```
+
+The container writes a request file inside a shared directory.
+
+A systemd `.path` unit monitors this directory and triggers a `.service` unit when a request is detected.
+
+The service executes a privileged script responsible for performing the shutdown sequence.
+
+---
+
+## MQTT Topics
+
+Example for `DEVICE_ID=FTP_SERVER`
+
+### Commands
+
+```text
+mqtt2shutdown/FTP_SERVER/cmd/shutdown
+```
+
+### Telemetry
+
+```text
+mqtt2shutdown/FTP_SERVER/telemetry/availability
+mqtt2shutdown/FTP_SERVER/telemetry/heartbeat
+mqtt2shutdown/FTP_SERVER/telemetry/uptime
+```
+
+### Events
+
+```text
+mqtt2shutdown/FTP_SERVER/event/state
+mqtt2shutdown/FTP_SERVER/event/event
+mqtt2shutdown/FTP_SERVER/event/error
+```
+
+---
+
+## Home Assistant Discovery
+
+The application automatically publishes a Home Assistant Device Discovery payload.
+
+Currently exposed entities:
+
+* Connectivity binary sensor
+* State sensor
+* Event sensor
+* Heartbeat sensor
+* Error sensor
+* Uptime sensor
+* Shutdown button
+
+---
+
+## Docker Usage
 
 Build image:
-docker build ~/MQTT_shutdown/ -t mqtt2shutdown
 
-Create shared folder:
-mkdir /opt/mqtt2shutdown/commands/
-chown root:root /opt/mqtt2shutdown
-chmod 755 /opt/mqtt2shutdown
-chown root:root /opt/mqtt2shutdown/commands
-chmod 777 /opt/mqtt2shutdown/commands
+```bash
+docker build . -t mqtt2shutdown
+```
 
-Copy handler:
-sudo cp shutdown-handler.sh /usr/local/bin/shutdown-handler.sh
-sudo chown root:root /usr/local/bin/mqtt2shutdown-handler.sh # maybe usefull due to sudo cp.
+Run container:
+
+```bash
+docker run \
+  --name mqtt2shutdown \
+  -v /opt/mqtt2shutdown/commands:/shared/commands \
+  -e MQTT_ADDRESS=192.168.11.11 \
+  -e MQTT_PORT=1883 \
+  -e MQTT_USER=mqtt_user \
+  -e MQTT_PASSWORD=xxxxx \
+  -e DEVICE_ID=FTP_SERVER \
+  -e DEVICE_NAME="FTP Server" \
+  -e DEVICE_MANUFACTURER=Homelab \
+  -e DEVICE_MODEL="Arch Linux vsftpd" \
+  mqtt2shutdown
+```
+
+---
+
+## Host Configuration
+
+Create shared directory:
+
+```bash
+sudo mkdir -p /opt/mqtt2shutdown/commands
+
+sudo chown root:root /opt/mqtt2shutdown
+sudo chmod 755 /opt/mqtt2shutdown
+
+sudo chown root:root /opt/mqtt2shutdown/commands
+sudo chmod 777 /opt/mqtt2shutdown/commands
+```
+
+---
+
+## Install Shutdown Handler
+
+```bash
+sudo cp shutdown-handler.sh /usr/local/bin/mqtt2shutdown-handler.sh
+
+sudo chown root:root /usr/local/bin/mqtt2shutdown-handler.sh
 sudo chmod 700 /usr/local/bin/mqtt2shutdown-handler.sh
+```
 
-Copy services:
-sudo cp ./systemd/* /etc/systemd/system/
-sudo chmod 644 /etc/systemd/system/...
+---
 
+## Install systemd Units
 
+```bash
+sudo cp systemd/* /etc/systemd/system/
+
+sudo chmod 644 /etc/systemd/system/mqtt2shutdown*
+sudo systemctl daemon-reload
+```
 
 Enable services:
-systemctl enable ...
+
+```bash
+sudo systemctl enable mqtt2shutdown-container.service
+sudo systemctl enable mqtt2shutdown.path
+
+sudo systemctl start mqtt2shutdown-container.service
+sudo systemctl start mqtt2shutdown.path
+```
+
+---
+
+## Security Model
+
+The Docker container does not execute privileged commands.
+
+The container only creates request files inside a shared directory.
+
+Systemd is responsible for executing privileged operations on the host.
+
+This design avoids:
+
+* privileged containers
+* Docker socket access
+* direct execution of shutdown commands from MQTT
+
+---
+
+## Roadmap
+
+Planned features:
+
+* TLS support
+* Command acknowledgement
+* Command timestamp validation
+* Replay protection
+* Reboot support
+* Wake-on-LAN support
+* Dynamic capabilities
+* Additional Home Assistant entities
+* Improved error reporting
+
+---
+
+## Disclaimer
+
+This software can remotely power off a machine.
+
+Use at your own risk and test carefully before deploying on production systems.
